@@ -1,37 +1,16 @@
-import { PrismaClient } from '@prisma/client'
-import fastify from 'fastify'
-import { z } from 'zod'
+import express from 'express'
+import users from './routes/users'
 
-const app = fastify()
+const app = express()
 
-const prisma = new PrismaClient()
+app.use(express.json())
 
-app.get('/users', async () => {
-    const users = await prisma.user.findMany()
-    return { users }
+app.use('/users', users)
+
+app.get('/test', (request, response) => {
+    return response.status(200).send({ message: 'OK' })
 })
 
-app.post('/users', async (request, reply) => {
-    const createUserSchema = z.object({
-        name: z.string(),
-        email: z.string().email()
-    })
-    const { name, email } = createUserSchema.parse(request.body)
-
-    await prisma.user.create({
-        data: { name, email }
-    })
-
-    return reply.status(201).send()
-})
-
-app.get('/test', (request, reply) => {
-    return reply.status(200).send({ message: 'OK' })
-})
-
-app.listen({
-    host: '0.0.0.0',
-    port: process.env.PORT ? Number(process.env.PORT) : 3333
-}).then(() => {
-    console.log('HTTP server running')
+app.listen(process.env.PORT ? Number(process.env.PORT) : 3333, () => {
+    console.log('HTTP Server Running')
 })
