@@ -25,6 +25,10 @@ app.post('/users', async (request, reply) => {
     return reply.status(201).send()
 })
 
+app.get('test', (request, reply) => {
+    return reply.status(200).send({ message: 'OK' })
+})
+
 app.listen({
     host: '0.0.0.0',
     port: process.env.PORT ? Number(process.env.PORT) : 3333
